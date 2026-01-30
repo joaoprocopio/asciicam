@@ -1,23 +1,64 @@
 import "./styles/global.css";
 
-const ASCII_CHARS =
-  "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`";
+let running: boolean = false,
+  rootEl: HTMLElement,
+  canvasEl: HTMLCanvasElement,
+  videoEl: HTMLVideoElement,
+  ctx: CanvasRenderingContext2D,
+  stream: MediaStream;
 
-const rootEl = document.getElementById("__root__");
+async function init() {
+  rootEl = document.getElementById("__root__")!;
 
-if (!rootEl) {
-  throw new Error("Root element not found");
+  if (!rootEl) {
+    throw new Error("Root element not found");
+  }
+
+  canvasEl = document.createElement("canvas");
+  canvasEl.classList.add("size-full");
+  rootEl.appendChild(canvasEl);
+
+  ctx = canvasEl.getContext("2d")!;
+
+  if (!ctx) {
+    throw new Error("Canvas context not found");
+  }
+
+  // TODO: esse valor precisa ser "reativo", ele precisa ser recalculado conforme se muda o tamanho do canvas
+  canvasEl.height = canvasEl.clientHeight;
+  canvasEl.width = canvasEl.clientWidth;
+
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: true,
+  });
+
+  videoEl = document.createElement("video");
+  videoEl.srcObject = stream;
+  videoEl.playsInline = true;
+  videoEl.muted = true;
+
+  await videoEl.play();
 }
 
-const stream = await navigator.mediaDevices.getUserMedia({
-  video: true,
-});
+function start() {
+  if (running) return;
+  running = true;
+  requestAnimationFrame(loop);
+}
 
-const videoEl = document.createElement("video");
-videoEl.classList.add("size-full");
-videoEl.srcObject = stream;
-videoEl.addEventListener("loadedmetadata", () => {
-  videoEl.play();
-});
+function render() {
+  console.log(videoEl);
+  ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+}
 
-rootEl.appendChild(videoEl);
+function loop() {
+  render();
+  requestAnimationFrame(loop);
+}
+
+async function bootstrap() {
+  await init();
+  start();
+}
+
+bootstrap();
