@@ -1,7 +1,7 @@
 import "./styles/global.css";
 
 const ASCII_CHARS =
-    "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`",
+    "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@",
   COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
   FONT_SIZE = 8,
   CHAR_WIDTH = 8,
