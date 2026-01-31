@@ -1,5 +1,5 @@
 import { makeEventListener } from "@solid-primitives/event-listener";
-import createRAF from "@solid-primitives/raf";
+import createRAF, { targetFPS } from "@solid-primitives/raf";
 
 import type { Accessor } from "solid-js";
 import { createEffect, createResource, on, onMount } from "solid-js";
@@ -27,25 +27,34 @@ export function Root() {
 
   const videoEl: HTMLVideoElement = document.createElement("video");
 
-  const [loopRunning, startLoop, stopLoop] = createRAF(() => {
-    canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-    bufferCtx.drawImage(videoEl, 0, 0, bufferEl.width, bufferEl.height);
-    const image = bufferCtx.getImageData(0, 0, bufferEl.width, bufferEl.height);
-    for (let i = 0; i < image.data.length; i += 4) {
-      const luminance =
-          0.2126 * image.data[i + 0] +
-          0.7152 * image.data[i + 1] +
-          0.0722 * image.data[i + 2],
-        charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1)),
-        char = ASCII_CHARS[charIndex],
-        pixelIndex = i / 4,
-        pixelX = (pixelIndex % bufferEl.width) * CHAR_WIDTH,
-        pixelY = Math.floor(pixelIndex / bufferEl.width) * CHAR_HEIGHT;
+  const [loopRunning, startLoop, stopLoop] = createRAF(
+    targetFPS(() => {
+      canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      bufferCtx.drawImage(videoEl, 0, 0, bufferEl.width, bufferEl.height);
 
-      canvasCtx.fillStyle = `#fff`;
-      canvasCtx.fillText(char, pixelX, pixelY);
-    }
-  });
+      const image = bufferCtx.getImageData(
+        0,
+        0,
+        bufferEl.width,
+        bufferEl.height,
+      );
+
+      for (let i = 0; i < image.data.length; i += 4) {
+        const luminance =
+            0.2126 * image.data[i + 0] +
+            0.7152 * image.data[i + 1] +
+            0.0722 * image.data[i + 2],
+          charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1)),
+          char = ASCII_CHARS[charIndex],
+          pixelIndex = i / 4,
+          pixelX = (pixelIndex % bufferEl.width) * CHAR_WIDTH,
+          pixelY = Math.floor(pixelIndex / bufferEl.width) * CHAR_HEIGHT;
+
+        canvasCtx.fillStyle = `#fff`;
+        canvasCtx.fillText(char, pixelX, pixelY);
+      }
+    }, 24),
+  );
 
   makeCanvasResizer({
     canvas: () => canvasEl,
