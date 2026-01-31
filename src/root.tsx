@@ -1,4 +1,4 @@
-export function App() {
+export function Root() {
   return (
     <div>
       <header>

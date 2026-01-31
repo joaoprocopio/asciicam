@@ -2,7 +2,7 @@
 import { render } from "solid-js/web";
 
 import "./styles/global.css";
-import { App } from "./app";
+import { Root } from "./root";
 
 const root = document.getElementById("__root");
 
@@ -12,4 +12,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+render(Root, root!);
