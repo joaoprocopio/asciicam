@@ -8,11 +8,11 @@ const ASCII_CHARS =
   CHAR_HEIGHT = 10;
 
 let rootEl: HTMLElement,
-  renderedCanvasEl: HTMLCanvasElement,
-  renderedCanvasCtx: CanvasRenderingContext2D,
-  offscreenCanvasEl: HTMLCanvasElement,
-  offscreenCanvasCtx: CanvasRenderingContext2D,
-  offscreenVideoEl: HTMLVideoElement,
+  canvasEl: HTMLCanvasElement,
+  canvasCtx: CanvasRenderingContext2D,
+  bufferEl: HTMLCanvasElement,
+  bufferCtx: CanvasRenderingContext2D,
+  videoEl: HTMLVideoElement,
   stream: MediaStream,
   cols: number,
   rows: number;
@@ -24,97 +24,78 @@ async function init() {
     throw new Error("Root element not found");
   }
 
-  renderedCanvasEl = document.createElement("canvas");
-  renderedCanvasEl.classList.add("size-full", "bg-black");
-  rootEl.appendChild(renderedCanvasEl);
+  canvasEl = document.createElement("canvas");
+  canvasEl.classList.add("size-full", "bg-black");
+  rootEl.appendChild(canvasEl);
 
-  renderedCanvasCtx = renderedCanvasEl.getContext("2d", {
+  canvasCtx = canvasEl.getContext("2d", {
     colorSpace: COLOR_SPACE,
   })!;
-  renderedCanvasCtx.imageSmoothingEnabled = false;
 
-  offscreenCanvasEl = document.createElement("canvas");
-  offscreenCanvasCtx = offscreenCanvasEl.getContext("2d", {
+  bufferEl = document.createElement("canvas");
+  bufferCtx = bufferEl.getContext("2d", {
     willReadFrequently: true,
     colorSpace: COLOR_SPACE,
   })!;
-  offscreenCanvasCtx.imageSmoothingEnabled = false;
 
-  if (!renderedCanvasCtx || !offscreenCanvasCtx) {
+  if (!canvasCtx || !bufferCtx) {
     throw new Error("Canvas context not found");
   }
 
-  renderedCanvasEl.height = renderedCanvasEl.clientHeight;
-  renderedCanvasEl.width = renderedCanvasEl.clientWidth;
+  canvasEl.height = canvasEl.clientHeight;
+  canvasEl.width = canvasEl.clientWidth;
 
-  cols = Math.floor(renderedCanvasEl.width / CHAR_WIDTH);
-  rows = Math.floor(renderedCanvasEl.height / CHAR_HEIGHT);
+  cols = Math.floor(canvasEl.width / CHAR_WIDTH);
+  rows = Math.floor(canvasEl.height / CHAR_HEIGHT);
 
-  offscreenCanvasEl.height = rows;
-  offscreenCanvasEl.width = cols;
+  bufferEl.height = rows;
+  bufferEl.width = cols;
 
-  renderedCanvasCtx.font = `${FONT_SIZE}px monospace`;
-  renderedCanvasCtx.textBaseline = "top";
+  canvasCtx.font = `${FONT_SIZE}px monospace`;
+  canvasCtx.textBaseline = "top";
 
   stream = await navigator.mediaDevices.getUserMedia({
     video: true,
   });
 
-  offscreenVideoEl = document.createElement("video");
-  offscreenVideoEl.srcObject = stream;
-  offscreenVideoEl.playsInline = true;
-  offscreenVideoEl.muted = true;
+  videoEl = document.createElement("video");
+  videoEl.srcObject = stream;
+  videoEl.playsInline = true;
+  videoEl.muted = true;
 
-  await offscreenVideoEl.play();
+  await videoEl.play();
 }
 
 function loop() {
   const image = renderOffscreen();
   renderAscii(image);
-
   requestAnimationFrame(loop);
 }
 
 function renderOffscreen(): ImageData {
-  renderedCanvasCtx.clearRect(
-    0,
-    0,
-    renderedCanvasEl.width,
-    renderedCanvasEl.height,
-  );
+  canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-  offscreenCanvasCtx.drawImage(
-    offscreenVideoEl,
-    0,
-    0,
-    offscreenCanvasEl.width,
-    offscreenCanvasEl.height,
-  );
+  bufferCtx.drawImage(videoEl, 0, 0, bufferEl.width, bufferEl.height);
 
-  const image = offscreenCanvasCtx.getImageData(
-    0,
-    0,
-    offscreenCanvasEl.width,
-    offscreenCanvasEl.height,
-  );
+  const image = bufferCtx.getImageData(0, 0, bufferEl.width, bufferEl.height);
 
   return image;
 }
 
 function renderAscii(image: ImageData) {
   for (let i = 0; i < image.data.length; i += 4) {
-    const r = image.data[i + 0],
-      g = image.data[i + 1],
-      b = image.data[i + 2],
-      luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b,
+    const luminance =
+        0.2126 * image.data[i + 0] +
+        0.7152 * image.data[i + 1] +
+        0.0722 * image.data[i + 2],
       charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1)),
       char = ASCII_CHARS[charIndex],
       pixelIndex = i / 4,
       pixelX = (pixelIndex % cols) * CHAR_WIDTH,
       pixelY = Math.floor(pixelIndex / cols) * CHAR_HEIGHT;
 
-    renderedCanvasCtx.fillStyle = `#fff`;
-    renderedCanvasCtx.fillText(char, pixelX, pixelY);
+    canvasCtx.fillStyle = `#fff`;
+    canvasCtx.fillText(char, pixelX, pixelY);
   }
 }
 
