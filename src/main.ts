@@ -69,8 +69,10 @@ async function init() {
 }
 
 function loop() {
-  renderAscii(renderOffscreen());
-  setTimeout(loop, 50);
+  const image = renderOffscreen();
+  renderAscii(image);
+
+  requestAnimationFrame(loop);
 }
 
 function renderOffscreen(): ImageData {
@@ -78,15 +80,15 @@ function renderOffscreen(): ImageData {
     offscreenVideoEl,
     0,
     0,
-    renderedCanvasEl.width,
-    renderedCanvasEl.height,
+    offscreenCanvasEl.width,
+    offscreenCanvasEl.height,
   );
 
   const image = offscreenCanvasCtx.getImageData(
     0,
     0,
-    renderedCanvasEl.width,
-    renderedCanvasEl.height,
+    offscreenCanvasEl.width,
+    offscreenCanvasEl.height,
   );
 
   return image;
@@ -102,27 +104,20 @@ function renderAscii(image: ImageData) {
   );
 
   for (let i = 0; i < image.data.length; i += 4) {
-    const r = image.data[i + 0];
-    const g = image.data[i + 1];
-    const b = image.data[i + 2];
-
-    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-    const charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1));
-    const char = ASCII_CHARS[charIndex];
-
-    const pixelIndex = i / 4;
-    const pixelX = (pixelIndex % cols) * CHAR_WIDTH;
-    const pixelY = Math.floor(pixelIndex / rows) * CHAR_HEIGHT;
+    const r = image.data[i + 0],
+      g = image.data[i + 1],
+      b = image.data[i + 2],
+      luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b,
+      charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1)),
+      char = ASCII_CHARS[charIndex],
+      pixelIndex = i / 4,
+      pixelX = (pixelIndex % cols) * CHAR_WIDTH,
+      pixelY = Math.floor(pixelIndex / cols) * CHAR_HEIGHT;
 
     renderedCanvasCtx.fillStyle = `#fff`;
     renderedCanvasCtx.fillText(char, pixelX, pixelY);
   }
 }
 
-async function bootstrap() {
-  await init();
-  loop();
-}
-
-bootstrap();
+await init();
+loop();
