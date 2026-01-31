@@ -3,9 +3,9 @@ import "./styles/global.css";
 const ASCII_CHARS =
     "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`",
   COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
-  FONT_SIZE = 12,
+  FONT_SIZE = 11,
   CHAR_WIDTH = 8,
-  CHAR_HEIGHT = 10;
+  CHAR_HEIGHT = FONT_SIZE;
 
 let rootEl: HTMLElement,
   renderedCanvasEl: HTMLCanvasElement,
@@ -25,7 +25,7 @@ async function init() {
   }
 
   renderedCanvasEl = document.createElement("canvas");
-  renderedCanvasEl.classList.add("size-full");
+  renderedCanvasEl.classList.add("size-full", "bg-black");
   rootEl.appendChild(renderedCanvasEl);
 
   renderedCanvasCtx = renderedCanvasEl.getContext("2d", {
@@ -76,6 +76,13 @@ function loop() {
 }
 
 function renderOffscreen(): ImageData {
+  renderedCanvasCtx.clearRect(
+    0,
+    0,
+    renderedCanvasEl.width,
+    renderedCanvasEl.height,
+  );
+
   offscreenCanvasCtx.drawImage(
     offscreenVideoEl,
     0,
@@ -95,14 +102,6 @@ function renderOffscreen(): ImageData {
 }
 
 function renderAscii(image: ImageData) {
-  renderedCanvasCtx.fillStyle = "#000";
-  renderedCanvasCtx.fillRect(
-    0,
-    0,
-    renderedCanvasEl.width,
-    renderedCanvasEl.height,
-  );
-
   for (let i = 0; i < image.data.length; i += 4) {
     const r = image.data[i + 0],
       g = image.data[i + 1],
