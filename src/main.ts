@@ -3,9 +3,9 @@ import "./styles/global.css";
 const ASCII_CHARS =
     "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`",
   COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
-  FONT_SIZE = 11,
+  FONT_SIZE = 8,
   CHAR_WIDTH = 8,
-  CHAR_HEIGHT = FONT_SIZE;
+  CHAR_HEIGHT = 10;
 
 let rootEl: HTMLElement,
   renderedCanvasEl: HTMLCanvasElement,
