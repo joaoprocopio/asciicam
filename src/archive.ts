@@ -11,16 +11,6 @@ let rootEl: HTMLElement,
   rows: number;
 
 async function init() {
-  rootEl = document.getElementById("__root")!;
-
-  if (!rootEl) {
-    throw new Error("Root element not found");
-  }
-
-  canvasEl = document.createElement("canvas");
-  canvasEl.classList.add("size-full", "bg-black");
-  rootEl.appendChild(canvasEl);
-
   canvasCtx = canvasEl.getContext("2d", {
     colorSpace: COLOR_SPACE,
   })!;

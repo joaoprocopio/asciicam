@@ -3,7 +3,7 @@
 @layer base {
     html,
     body,
-    #__root__ {
+    #__root {
         @apply h-full;
     }
 }
