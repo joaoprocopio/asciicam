@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@solid-primitives/devices':
+        specifier: ^1.3.1
+        version: 1.3.1(solid-js@1.9.11)
       '@solid-primitives/event-listener':
         specifier: ^2.4.3
         version: 2.4.3(solid-js@1.9.11)
@@ -413,6 +416,11 @@ packages:
     resolution: {integrity: sha512-mxRFDdHIWRxg3UfIIAwCm6NzvxG0jDX/wBN6KsQFTvKFqqg9vTrWUE68qEjHt19A5wwx5X5aUi2zuZT7YR0jrA==}
     cpu: [x64]
     os: [win32]
+
+  '@solid-primitives/devices@1.3.1':
+    resolution: {integrity: sha512-0edQ79D1/WwFaWZuWWo75n/M8JhM0CimLH3zahzB2i/mKA0BVtHV26/PBysqd3vFlRDl7rmjwqYjteyb1pBPIA==}
+    peerDependencies:
+      solid-js: ^1.6.12
 
   '@solid-primitives/event-listener@2.4.3':
     resolution: {integrity: sha512-h4VqkYFv6Gf+L7SQj+Y6puigL/5DIi7x5q07VZET7AWcS+9/G3WfIE9WheniHWJs51OEkRB43w6lDys5YeFceg==}
@@ -1227,6 +1235,10 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.57.1':
     optional: true
+
+  '@solid-primitives/devices@1.3.1(solid-js@1.9.11)':
+    dependencies:
+      solid-js: 1.9.11
 
   '@solid-primitives/event-listener@2.4.3(solid-js@1.9.11)':
     dependencies:

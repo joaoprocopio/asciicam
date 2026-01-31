@@ -1,6 +1,8 @@
+import { createCameras } from "@solid-primitives/devices";
 import { makeEventListener } from "@solid-primitives/event-listener";
+
 import type { Accessor } from "solid-js";
-import { onMount } from "solid-js";
+import { createEffect } from "solid-js";
 
 const ASCII_CHARS =
   "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
@@ -15,13 +17,18 @@ export function Root() {
   let canvasEl!: HTMLCanvasElement;
   let canvasCtx!: CanvasRenderingContext2D;
 
-  createCanvasResizer({
+  const cameras = createCameras();
+  createEffect(() => {
+    console.log(cameras());
+  });
+
+  makeCanvasResizer({
     canvas: () => canvasEl,
     width: () => window.innerWidth,
     height: () => window.innerHeight,
   });
 
-  createCanvasResizer({
+  makeCanvasResizer({
     canvas: () => bufferEl,
     width: () => Math.floor(canvasEl.width / CHAR_WIDTH),
     height: () => Math.floor(canvasEl.height / CHAR_HEIGHT),
@@ -38,18 +45,24 @@ export function Root() {
   );
 }
 
-function createCanvasResizer(props: {
+function makeCanvasResizer(props: {
   canvas: Accessor<HTMLCanvasElement>;
   width: Accessor<number>;
   height: Accessor<number>;
 }) {
-  // TODO: debounce
-  function resizeCanvas() {
-    const canvas = props.canvas();
+  // TODO: debounce `resizeCanvas`
+  function resizeCanvas(canvas: HTMLCanvasElement) {
     canvas.width = props.width();
     canvas.height = props.height();
   }
 
-  makeEventListener(window, "resize", resizeCanvas, { passive: true });
-  onMount(resizeCanvas);
+  createEffect(() => {
+    const canvas = props.canvas();
+    if (!(canvas instanceof HTMLElement)) return;
+
+    resizeCanvas(canvas);
+    makeEventListener(window, "resize", () => resizeCanvas(canvas), {
+      passive: true,
+    });
+  });
 }

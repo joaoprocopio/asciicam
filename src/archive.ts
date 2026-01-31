@@ -11,12 +11,6 @@ let rootEl: HTMLElement,
   rows: number;
 
 async function init() {
-  cols = Math.floor(canvasEl.width / CHAR_WIDTH);
-  rows = Math.floor(canvasEl.height / CHAR_HEIGHT);
-
-  bufferEl.height = rows;
-  bufferEl.width = cols;
-
   canvasCtx.font = `${FONT_SIZE}px monospace`;
   canvasCtx.textBaseline = "top";
 
