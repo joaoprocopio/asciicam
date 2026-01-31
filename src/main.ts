@@ -1,11 +1,13 @@
 import "./styles/global.css";
 
-const ASCII_CHARS: string =
+const ASCII_CHARS =
     "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`",
-  COLOR_SPACE: PredefinedColorSpace = "srgb";
+  COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
+  FONT_SIZE = 10,
+  CHAR_WIDTH = 6,
+  CHAR_HEIGHT = FONT_SIZE;
 
-let running: boolean = false,
-  rootEl: HTMLElement,
+let rootEl: HTMLElement,
   renderedCanvasEl: HTMLCanvasElement,
   renderedCanvasCtx: CanvasRenderingContext2D,
   offscreenCanvasEl: HTMLCanvasElement,
@@ -40,14 +42,17 @@ async function init() {
     throw new Error("Canvas context not found");
   }
 
-  const HEIGHT = renderedCanvasEl.height / 2,
-    WIDTH = renderedCanvasEl.width / 2;
+  renderedCanvasEl.height = renderedCanvasEl.clientHeight;
+  renderedCanvasEl.width = renderedCanvasEl.clientWidth;
 
-  renderedCanvasEl.height = HEIGHT;
-  renderedCanvasEl.width = WIDTH;
+  const COLS = Math.floor(renderedCanvasEl.width / CHAR_WIDTH),
+    ROWS = Math.floor(renderedCanvasEl.height / CHAR_HEIGHT);
 
-  offscreenCanvasEl.height = HEIGHT;
-  offscreenCanvasEl.width = WIDTH;
+  offscreenCanvasEl.height = ROWS;
+  offscreenCanvasEl.width = COLS;
+
+  renderedCanvasCtx.font = `${FONT_SIZE}px monospace`;
+  renderedCanvasCtx.textBaseline = "top";
 
   stream = await navigator.mediaDevices.getUserMedia({
     video: true,
@@ -59,12 +64,6 @@ async function init() {
   offscreenVideoEl.muted = true;
 
   await offscreenVideoEl.play();
-}
-
-function start() {
-  if (running) return;
-  running = true;
-  loop();
 }
 
 function loop() {
@@ -88,17 +87,18 @@ function renderOffscreen(): ImageData {
     renderedCanvasEl.height,
   );
 
-  renderedCanvasCtx.clearRect(
+  return image;
+}
+
+function renderAscii(image: ImageData) {
+  renderedCanvasCtx.fillStyle = "#000";
+  renderedCanvasCtx.fillRect(
     0,
     0,
     renderedCanvasEl.width,
     renderedCanvasEl.height,
   );
 
-  return image;
-}
-
-function renderAscii(image: ImageData) {
   for (let i = 0; i < image.data.length; i += 4) {
     const r = image.data[i + 0];
     const g = image.data[i + 1];
@@ -109,18 +109,18 @@ function renderAscii(image: ImageData) {
     const charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1));
     const char = ASCII_CHARS[charIndex];
 
-    renderedCanvasCtx.fillStyle = `rgb(${r},${g},${b})`;
-    renderedCanvasCtx.fillText(
-      char,
-      (i / 4) % renderedCanvasEl.width,
-      Math.floor(i / 4 / renderedCanvasEl.width),
-    );
+    // renderedCanvasCtx.fillStyle = `rgb(${r},${g},${b})`;
+    // renderedCanvasCtx.fillText(
+    //   char,
+    //   (i / 4) % renderedCanvasEl.width,
+    //   Math.floor(i / 4 / renderedCanvasEl.width),
+    // );
   }
 }
 
 async function bootstrap() {
   await init();
-  start();
+  loop();
 }
 
 bootstrap();
