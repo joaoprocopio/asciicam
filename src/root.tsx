@@ -6,9 +6,9 @@ import { createEffect, createResource, on, onMount } from "solid-js";
 
 const ASCII_CHARS =
   "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
-const FONT_SIZE = 8;
-const CHAR_WIDTH = 8;
-const CHAR_HEIGHT = 10;
+const FONT_SIZE = 7;
+const CHAR_WIDTH = 7;
+const CHAR_HEIGHT = 7;
 
 export function Root() {
   const [camera] = createResource(() =>
@@ -20,10 +20,8 @@ export function Root() {
   let canvasEl!: HTMLCanvasElement;
   let canvasCtx!: CanvasRenderingContext2D;
 
-  const bufferEl: HTMLCanvasElement = document.createElement("canvas");
-  const bufferCtx: CanvasRenderingContext2D = bufferEl.getContext("2d", {
-    willReadFrequently: true,
-  })!;
+  let bufferEl!: HTMLCanvasElement;
+  let bufferCtx!: CanvasRenderingContext2D;
 
   const videoEl: HTMLVideoElement = document.createElement("video");
 
@@ -68,16 +66,7 @@ export function Root() {
     height: () => Math.floor(canvasEl.height / CHAR_HEIGHT),
   });
 
-  createEffect(() => {
-    if (
-      !(canvasEl instanceof HTMLElement) ||
-      !(bufferEl instanceof HTMLElement)
-    )
-      return;
-
-    canvasCtx.font = `${FONT_SIZE}px monospace`;
-    canvasCtx.textBaseline = "top";
-
+  onMount(() => {
     startLoop();
   });
 
@@ -95,6 +84,12 @@ export function Root() {
       ref={(canvasRef) => {
         canvasEl = canvasRef;
         canvasCtx = canvasRef.getContext("2d")!;
+        bufferEl = document.createElement("canvas");
+        bufferCtx = bufferEl.getContext("2d", {
+          willReadFrequently: true,
+        })!;
+        canvasCtx.font = `${FONT_SIZE}px monospace`;
+        canvasCtx.textBaseline = "top";
       }}
     />
   );
