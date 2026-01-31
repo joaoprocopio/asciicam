@@ -27,7 +27,7 @@ export function Root() {
 
   const [loopRunning, startLoop, stopLoop] = createRAF(
     targetFPS(() => {
-      canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      bufferCtx.reset();
       bufferCtx.drawImage(videoEl, 0, 0, bufferEl.width, bufferEl.height);
 
       const image = bufferCtx.getImageData(
@@ -36,6 +36,7 @@ export function Root() {
         bufferEl.width,
         bufferEl.height,
       );
+      canvasCtx.reset();
 
       for (let i = 0; i < image.data.length; i += 4) {
         const luminance =
