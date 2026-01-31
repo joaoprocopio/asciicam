@@ -7,8 +7,8 @@ import { createEffect, createResource, on, onMount } from "solid-js";
 const ASCII_CHARS =
   "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 const FONT_SIZE = 7;
-const CHAR_WIDTH = 7;
-const CHAR_HEIGHT = 7;
+const CHAR_WIDTH = 8;
+const CHAR_HEIGHT = 10;
 
 export function Root() {
   const [camera] = createResource(() =>
