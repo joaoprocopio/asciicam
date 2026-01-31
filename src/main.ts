@@ -3,9 +3,9 @@ import "./styles/global.css";
 const ASCII_CHARS =
     "@&%QWNM0gB$#DR8mHXKAUbGOpV4d9h6PkqwSE2]ayjxY5Zoen[ult13If}C{iF|(7J)vTLs?z/*cr!+<>;=^,_:'-.`",
   COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
-  FONT_SIZE = 10,
-  CHAR_WIDTH = 6,
-  CHAR_HEIGHT = FONT_SIZE;
+  FONT_SIZE = 12,
+  CHAR_WIDTH = 8,
+  CHAR_HEIGHT = 10;
 
 let rootEl: HTMLElement,
   renderedCanvasEl: HTMLCanvasElement,
@@ -13,7 +13,9 @@ let rootEl: HTMLElement,
   offscreenCanvasEl: HTMLCanvasElement,
   offscreenCanvasCtx: CanvasRenderingContext2D,
   offscreenVideoEl: HTMLVideoElement,
-  stream: MediaStream;
+  stream: MediaStream,
+  cols: number,
+  rows: number;
 
 async function init() {
   rootEl = document.getElementById("__root__")!;
@@ -45,11 +47,11 @@ async function init() {
   renderedCanvasEl.height = renderedCanvasEl.clientHeight;
   renderedCanvasEl.width = renderedCanvasEl.clientWidth;
 
-  const COLS = Math.floor(renderedCanvasEl.width / CHAR_WIDTH),
-    ROWS = Math.floor(renderedCanvasEl.height / CHAR_HEIGHT);
+  cols = Math.floor(renderedCanvasEl.width / CHAR_WIDTH);
+  rows = Math.floor(renderedCanvasEl.height / CHAR_HEIGHT);
 
-  offscreenCanvasEl.height = ROWS;
-  offscreenCanvasEl.width = COLS;
+  offscreenCanvasEl.height = rows;
+  offscreenCanvasEl.width = cols;
 
   renderedCanvasCtx.font = `${FONT_SIZE}px monospace`;
   renderedCanvasCtx.textBaseline = "top";
@@ -109,12 +111,12 @@ function renderAscii(image: ImageData) {
     const charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1));
     const char = ASCII_CHARS[charIndex];
 
-    // renderedCanvasCtx.fillStyle = `rgb(${r},${g},${b})`;
-    // renderedCanvasCtx.fillText(
-    //   char,
-    //   (i / 4) % renderedCanvasEl.width,
-    //   Math.floor(i / 4 / renderedCanvasEl.width),
-    // );
+    const pixelIndex = i / 4;
+    const pixelX = (pixelIndex % cols) * CHAR_WIDTH;
+    const pixelY = Math.floor(pixelIndex / rows) * CHAR_HEIGHT;
+
+    renderedCanvasCtx.fillStyle = `#fff`;
+    renderedCanvasCtx.fillText(char, pixelX, pixelY);
   }
 }
 
