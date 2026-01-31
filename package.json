@@ -5,19 +5,20 @@
   "packageManager": "pnpm@10.28.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "clear": "pnpm cache delete && pnpm store prune --force",
+    "clean": "git clean -xdf node_modules dist",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
+  },
+  "dependencies": {
+    "solid-js": "^1.9.11"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.2.5"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.2.5"
-    }
+    "vite": "^7.3.1",
+    "vite-plugin-solid": "^2.11.10"
   }
 }

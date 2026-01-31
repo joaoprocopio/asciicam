@@ -18,7 +18,7 @@ let rootEl: HTMLElement,
   rows: number;
 
 async function init() {
-  rootEl = document.getElementById("__root__")!;
+  rootEl = document.getElementById("__root")!;
 
   if (!rootEl) {
     throw new Error("Root element not found");
