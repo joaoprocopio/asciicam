@@ -12,6 +12,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@solid-primitives/event-listener": "^2.4.3",
+    "@solid-primitives/media": "^2.3.3",
     "solid-js": "^1.9.11"
   },
   "devDependencies": {

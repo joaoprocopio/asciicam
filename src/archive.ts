@@ -1,12 +1,5 @@
 import "./styles/global.css";
 
-const ASCII_CHARS =
-    "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@",
-  COLOR_SPACE = "srgb" satisfies PredefinedColorSpace,
-  FONT_SIZE = 8,
-  CHAR_WIDTH = 8,
-  CHAR_HEIGHT = 10;
-
 let rootEl: HTMLElement,
   canvasEl: HTMLCanvasElement,
   canvasCtx: CanvasRenderingContext2D,
