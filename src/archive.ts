@@ -11,23 +11,6 @@ let rootEl: HTMLElement,
   rows: number;
 
 async function init() {
-  canvasCtx = canvasEl.getContext("2d", {
-    colorSpace: COLOR_SPACE,
-  })!;
-
-  bufferEl = document.createElement("canvas");
-  bufferCtx = bufferEl.getContext("2d", {
-    willReadFrequently: true,
-    colorSpace: COLOR_SPACE,
-  })!;
-
-  if (!canvasCtx || !bufferCtx) {
-    throw new Error("Canvas context not found");
-  }
-
-  canvasEl.height = canvasEl.clientHeight;
-  canvasEl.width = canvasEl.clientWidth;
-
   cols = Math.floor(canvasEl.width / CHAR_WIDTH);
   rows = Math.floor(canvasEl.height / CHAR_HEIGHT);
 

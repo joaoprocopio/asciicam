@@ -15,7 +15,17 @@ export function Root() {
   let canvasEl!: HTMLCanvasElement;
   let canvasCtx!: CanvasRenderingContext2D;
 
-  createCanvasResizer(() => canvasEl);
+  createCanvasResizer({
+    canvas: () => canvasEl,
+    width: () => window.innerWidth,
+    height: () => window.innerHeight,
+  });
+
+  createCanvasResizer({
+    canvas: () => bufferEl,
+    width: () => Math.floor(canvasEl.width / CHAR_WIDTH),
+    height: () => Math.floor(canvasEl.height / CHAR_HEIGHT),
+  });
 
   return (
     <canvas
@@ -28,31 +38,18 @@ export function Root() {
   );
 }
 
-function createCanvasResizer(canvasEl: Accessor<HTMLCanvasElement>) {
+function createCanvasResizer(props: {
+  canvas: Accessor<HTMLCanvasElement>;
+  width: Accessor<number>;
+  height: Accessor<number>;
+}) {
+  // TODO: debounce
   function resizeCanvas() {
-    const resolvedCanvasEl = canvasEl();
-
-    resolvedCanvasEl.width = window.innerWidth;
-    resolvedCanvasEl.height = window.innerHeight;
+    const canvas = props.canvas();
+    canvas.width = props.width();
+    canvas.height = props.height();
   }
 
-  makeEventListener(
-    window,
-    "resize",
-    () => {
-      resizeCanvas();
-    },
-    { passive: true },
-  );
-
-  onMount(() => {
-    resizeCanvas();
-  });
+  makeEventListener(window, "resize", resizeCanvas, { passive: true });
+  onMount(resizeCanvas);
 }
-
-export const stopPropagation =
-  <E extends Event>(callback: (event: E) => void): ((event: E) => void) =>
-  (e) => {
-    e.stopPropagation();
-    callback(e);
-  };
