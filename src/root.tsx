@@ -5,7 +5,7 @@ import type { Accessor } from "solid-js";
 import { createEffect, createResource, on, onMount } from "solid-js";
 
 const ASCII_CHARS =
-  "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+  " .`',-:;_!\"^~+<=>?L)JTlrv|x(*IYciju/7\\fnyz4C]o236FVXZehsUa}59HPdkAEGKObmpqtw{1DSg&M#%0RN[8BQ@W$";
 const FONT_SIZE = 7;
 const CHAR_WIDTH = 8;
 const CHAR_HEIGHT = 10;
