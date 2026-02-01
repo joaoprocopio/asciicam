@@ -2,7 +2,7 @@ import { makeEventListener } from "@solid-primitives/event-listener";
 import createRAF, { targetFPS } from "@solid-primitives/raf";
 
 import type { Accessor } from "solid-js";
-import { createEffect, createResource, on, onMount } from "solid-js";
+import { createEffect, createResource, onMount } from "solid-js";
 
 const ASCII_CHARS =
   " .`',-:;_!\"^~+<=>?L)JTlrv|x(*IYciju/7\\fnyz4C]o236FVXZehsUa}59HPdkAEGKObmpqtw{1DSg&M#%0RN[8BQ@W$";
@@ -20,12 +20,12 @@ export function Root() {
   let canvasEl!: HTMLCanvasElement;
   let canvasCtx!: CanvasRenderingContext2D;
 
-  let bufferEl!: HTMLCanvasElement;
-  let bufferCtx!: CanvasRenderingContext2D;
+  let bufferEl!: OffscreenCanvas;
+  let bufferCtx!: OffscreenCanvasRenderingContext2D;
 
   const videoEl: HTMLVideoElement = document.createElement("video");
 
-  const [loopRunning, startLoop, stopLoop] = createRAF(
+  const [_loopRunning, startLoop, _stopLoop] = createRAF(
     targetFPS(() => {
       bufferCtx.reset();
       bufferCtx.drawImage(videoEl, 0, 0, bufferEl.width, bufferEl.height);
@@ -90,10 +90,10 @@ export function Root() {
   return (
     <canvas
       class="size-full bg-black"
-      ref={(canvasRef) => {
-        canvasEl = canvasRef;
-        canvasCtx = canvasRef.getContext("2d")!;
-        bufferEl = document.createElement("canvas");
+      ref={(ref) => {
+        canvasEl = ref;
+        canvasCtx = ref.getContext("2d")!;
+        bufferEl = new OffscreenCanvas(canvasEl.width, canvasEl.height);
         bufferCtx = bufferEl.getContext("2d", {
           willReadFrequently: true,
         })!;
@@ -105,12 +105,12 @@ export function Root() {
 }
 
 function makeCanvasResizer(props: {
-  canvas: Accessor<HTMLCanvasElement>;
+  canvas: Accessor<HTMLCanvasElement | OffscreenCanvas>;
   width: Accessor<number>;
   height: Accessor<number>;
 }) {
   // TODO: debounce `resizeCanvas`
-  function resizeCanvas(canvas: HTMLCanvasElement) {
+  function resizeCanvas(canvas: HTMLCanvasElement | OffscreenCanvas) {
     canvas.width = props.width();
     canvas.height = props.height();
   }
