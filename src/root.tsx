@@ -104,13 +104,15 @@ export function Root() {
   );
 }
 
+type AnyCanvas = HTMLCanvasElement | OffscreenCanvas;
+
 function makeCanvasResizer(props: {
-  canvas: Accessor<HTMLCanvasElement | OffscreenCanvas>;
+  canvas: Accessor<AnyCanvas>;
   width: Accessor<number>;
   height: Accessor<number>;
 }) {
   // TODO: debounce `resizeCanvas`
-  function resizeCanvas(canvas: HTMLCanvasElement | OffscreenCanvas) {
+  function resizeCanvas(canvas: AnyCanvas) {
     canvas.width = props.width();
     canvas.height = props.height();
   }
