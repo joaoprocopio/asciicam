@@ -38,6 +38,8 @@ export function Root() {
       );
       canvasCtx.reset();
 
+      canvasCtx.fillStyle = `#fff`;
+
       for (let i = 0; i < image.data.length; i += 4) {
         const luminance =
             0.2126 * image.data[i + 0] +
@@ -49,7 +51,6 @@ export function Root() {
           pixelX = (pixelIndex % bufferEl.width) * CHAR_WIDTH,
           pixelY = Math.floor(pixelIndex / bufferEl.width) * CHAR_HEIGHT;
 
-        canvasCtx.fillStyle = `#fff`;
         canvasCtx.fillText(char, pixelX, pixelY);
       }
     }, 24),
