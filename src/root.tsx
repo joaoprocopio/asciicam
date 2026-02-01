@@ -37,21 +37,28 @@ export function Root() {
         bufferEl.height,
       );
       canvasCtx.reset();
-
       canvasCtx.fillStyle = `#fff`;
 
-      for (let i = 0; i < image.data.length; i += 4) {
-        const luminance =
-            0.2126 * image.data[i + 0] +
-            0.7152 * image.data[i + 1] +
-            0.0722 * image.data[i + 2],
-          charIndex = Math.floor((luminance / 255) * (ASCII_CHARS.length - 1)),
-          char = ASCII_CHARS[charIndex],
-          pixelIndex = i / 4,
-          pixelX = (pixelIndex % bufferEl.width) * CHAR_WIDTH,
-          pixelY = Math.floor(pixelIndex / bufferEl.width) * CHAR_HEIGHT;
+      let idx = 0;
 
-        canvasCtx.fillText(char, pixelX, pixelY);
+      for (let col = 0; col < bufferEl.height; col++) {
+        const py = col * CHAR_HEIGHT;
+
+        for (let row = 0; row < bufferEl.width; row++) {
+          const px = row * CHAR_WIDTH;
+
+          const r = image.data[idx];
+          const g = image.data[idx + 1];
+          const b = image.data[idx + 2];
+
+          idx += 4;
+
+          const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          const char =
+            ASCII_CHARS[((lum / 255) * (ASCII_CHARS.length - 1)) | 0];
+
+          canvasCtx.fillText(char, px, py);
+        }
       }
     }, 24),
   );
