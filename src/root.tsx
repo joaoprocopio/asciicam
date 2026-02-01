@@ -1,5 +1,5 @@
 import { makeEventListener } from "@solid-primitives/event-listener";
-import createRAF, { targetFPS } from "@solid-primitives/raf";
+import { targetFPS, createRAF } from "@solid-primitives/raf";
 
 import type { Accessor } from "solid-js";
 import { createEffect, createResource, onMount } from "solid-js";
@@ -117,7 +117,8 @@ function makeCanvasResizer(props: {
 
   createEffect(() => {
     const canvas = props.canvas();
-    if (!(canvas instanceof HTMLElement)) return;
+
+    if (canvas == null) return;
 
     resizeCanvas(canvas);
     makeEventListener(window, "resize", () => resizeCanvas(canvas), {
