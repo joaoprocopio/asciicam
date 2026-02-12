@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@solid-primitives/event-listener": "^2.4.3",
-    "@solid-primitives/raf": "^2.3.2",
     "solid-js": "^1.9.11"
   },
   "devDependencies": {
